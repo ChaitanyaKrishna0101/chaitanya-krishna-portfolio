@@ -24,6 +24,16 @@ async def chat_proxy(request: Request):
         )
     return res.json()
 
+@app.get("/intro.mp4")
+async def serve_video():
+    f = dist_path / "intro.mp4"
+    return FileResponse(str(f), media_type="video/mp4")
+
+@app.get("/favicon.svg")
+async def serve_favicon():
+    f = dist_path / "favicon.svg"
+    return FileResponse(str(f), media_type="image/svg+xml")
+
 app.mount("/assets", StaticFiles(directory=str(dist_path / "assets")), name="assets")
 
 @app.get("/")
