@@ -39,8 +39,8 @@ export default function AIChat() {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [apiKey, setApiKey] = useState(localStorage.getItem('groq_key') || '');
-  const [showKeyInput, setShowKeyInput] = useState(!localStorage.getItem('groq_key'));
+  const [apiKey, setApiKey] = useState('');
+  const [showKeyInput, setShowKeyInput] = useState(false);
   const chatBoxRef = useRef(null);
 
   useEffect(() => {
@@ -64,19 +64,13 @@ export default function AIChat() {
     setMessages(newMessages);
     setLoading(true);
 
-    const key = localStorage.getItem('groq_key') || apiKey;
-    if (!key) {
-      setMessages([...newMessages, { role: 'assistant', content: 'Please add a Groq API key to enable AI responses.' }]);
-      setLoading(false);
-      return;
-    }
+    
 
     try {
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      const res = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${key}`,
         },
         body: JSON.stringify({
           model: 'llama-3.1-8b-instant',
@@ -120,33 +114,7 @@ export default function AIChat() {
           </p>
         </div>
 
-        {/* API Key setup */}
-        {showKeyInput && (
-          <div style={{ marginBottom: '1.5rem', padding: '1.5rem', border: '1px solid rgba(255,140,0,0.3)', background: 'rgba(255,140,0,0.05)' }}>
-            <div style={{ fontSize: '10px', letterSpacing: '2px', color: '#ff8c00', marginBottom: '1rem' }}>⚡ ADD GROQ API KEY TO ENABLE AI CHAT</div>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input
-                type="password"
-                placeholder="gsk_..."
-                value={apiKey}
-                onChange={e => setApiKey(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && saveKey()}
-                style={{
-                  flex: 1, padding: '10px 14px', background: 'var(--bg)',
-                  border: '1px solid var(--border)', color: 'var(--text)',
-                  fontSize: '12px', fontFamily: 'var(--mono)', outline: 'none',
-                }}
-              />
-              <button onClick={saveKey}
-                style={{ padding: '10px 20px', background: '#ff8c00', color: 'var(--bg)', fontSize: '10px', letterSpacing: '2px', fontFamily: 'var(--mono)', fontWeight: 600 }}>
-                SAVE
-              </button>
-            </div>
-            <p style={{ fontSize: '10px', color: 'var(--text-dim)', marginTop: '8px' }}>
-              Get a free key at console.groq.com — stored locally only
-            </p>
-          </div>
-        )}
+        
 
         {/* Chat window */}
         <div style={{ border: '1px solid var(--border)', background: 'var(--bg)', marginBottom: '1rem' }}>
@@ -158,12 +126,7 @@ export default function AIChat() {
               </div>
               <span style={{ fontSize: '10px', color: 'var(--text-dim)', fontFamily: 'var(--code)', marginLeft: '8px' }}>chaitanya_ai.chat</span>
             </div>
-            {!showKeyInput && (
-              <button onClick={() => setShowKeyInput(true)}
-                style={{ fontSize: '9px', color: 'var(--text-dim)', letterSpacing: '1px' }}>
-                CHANGE KEY
-              </button>
-            )}
+            
           </div>
 
           {/* Messages */}
